@@ -1,0 +1,215 @@
+from tabulate import tabulate
+from typing import Dict, List
+
+
+#tinggal di-run saja
+data = {
+    "Mishbah": ["Basic Plan", 12, "mishbah-2134"],
+    "Cahya": ["Standard Plan", 24, "cahya-abcd"],
+    "Ana": ["Premium Plan", 5, "ana-2f9g"],
+    "Bagus": ["Basic Plan", 11, "bagus-9f92"],
+    "Hendra": ["Basic Plan", 12, "hendra-123x"]
+}
+
+class User:
+    def __init__(self, username: str):
+        self.username = username
+
+    # method check plan
+    def check_benefit(self):
+        """Method yang digunakan untuk menampilkan all benefits dari Pacflix"""
+        # init headers
+        headers = ["Basic Plan", "Standard Plan", "Premium Plan", "Benefits"]
+
+        # init data
+        table = [[True, True, True, "Bisa Stream"],
+                [True, True, True, "Bisa Download"],
+                [True, True, True, "Kualitas SD"],
+                [False, True, True, "Kualitas HD"],
+                [False, False, True, "Kualitas UHD"],
+                [1, 2, 4, "Number of Devices"],
+                ["3rd party Movie Only", "Basic Plan Content + Sports", "Basic Plan + Standard Plan + Pacflix Original Series", "Jenis Konten"],
+                [120_000, 160_000, 200_000, "Harga"]]
+        
+        print("===== Pacflix Plan List =====")
+        print("")
+        print(tabulate(table, headers, tablefmt="psql"))
+
+    # method check benefit based on input username
+    def check_plan(self, username: str) -> None:
+        """
+        Method yang digunakan untuk mengambil data user Pacflix based on username
+        
+        Parameters
+        ''''''''''
+        username (str): input username
+        """
+
+        # iterate keys and values based on data
+        for keys, values in data.items():
+
+            # create branching to filter username
+            if username == keys:
+
+                # create variable to store the value
+                get_current_plan = values[0]
+                get_duration_plan = values[1]
+
+                print(f"Username: {username}")
+                print(f"Current Plan: {get_current_plan}")
+                print(f"Duration Plan: {get_duration_plan}")
+
+    # method upgrade plan based on username
+    def upgrade_plan(self, username: str, upgrade_plan: str) -> float:
+        """
+        Method untuk upgrade subscription Pacflix
+
+        Parameters
+        ----------
+        username (str): username current user
+        upgrade_plan (str): upgrade plan yang dipilih oleh current user
+
+        Returns
+        -------
+        total_price (float): final price yang harus dibayar oleh current user
+        """
+        DISCOUNT= 0.05
+
+        # iterate keys and values based on data
+        for keys, values in data.items():
+            
+            try:
+                # create branching to filter username
+                if username == keys:
+    
+                    # create variable to store the value
+                    get_current_plan = values[0]
+                    get_duration_plan = values[1]
+
+                    if upgrade_plan != get_duration_plan:
+                        # filter duration plan to get a discount 5%
+                        if get_duration_plan > 12:
+                            # logic discount
+                            if upgrade_plan == "Basic Plan":
+                                total_price = 120_000 - (120_000 * DISCOUNT)
+
+                                return total_price
+                                
+                            elif upgrade_plan == "Standard Plan":
+                                total_price = 160_000 - (160_000 * DISCOUNT)
+
+                                return total_price
+
+                            elif upgrade_plan == "Premium Plan":
+                                total_price = 200_000 - (200_000 * DISCOUNT)
+
+                                return total_price
+
+                            else:
+                                raise Exception("Unknown plan")
+
+                        else:
+                            # branching if not discount
+                            if upgrade_plan == "Basic Plan":
+                                total_price = 120_000
+
+                                return total_price
+
+                            elif upgrade_plan == "Standard Plan":
+                                total_price = 160_000
+
+                                return total_price
+
+                            elif upgrade_plan == "Premium Plan":
+                                total_price = 200_000
+
+                                return total_price 
+
+                            else: 
+                                raise Exception("Unknown plan")
+
+                    else:
+                        raise Exception("Plan tidak boleh sama!")
+
+            except:
+                raise Exception("Unknown process")
+
+        
+class NewUser:
+    referral_code = []
+
+    def __init__(self, username: str):
+        self.username = username
+
+    # method to extract referral code from dictionary
+    def get_referral_code(self, data: Dict[str, str]) -> List[str]:
+        """
+        Method untuk extract Referral Code pada Dictionary Data
+        
+        Parameters
+        ----------
+        data (dict): Dictionary user data Pacflix
+
+        Returns
+        -------
+        referral_code (list): List of referral code dari referral code
+        """
+        # iterate to data
+        for value in data.values():
+            ref_code = value[2]
+
+            # append to empty list
+            self.referral_code.append(ref_code)
+
+        return self.referral_code
+
+    # method untuk new user pick plan
+    def pick_plan(self, new_plan: str, referral_code: str) -> float:
+        """"
+        Method yang digunakan untuk user baru memilih plan berdasarkan referral code
+
+        Parameters
+        ----------
+        new_plan (str): Subscribe plan yang dipilih
+        referral_code (str): Referral code yang tersedia pada database
+
+        Returns
+        -------
+        total_price (float): Final price yang dibayar oleh new user
+        """
+
+        # initiate discount
+        DISCOUNT = 0.04
+
+        if referral_code in self.referral_code:
+            # proses lanjut
+
+            if new_plan == "Basic Plan":
+                total_price = 120_000 - (120_000 * DISCOUNT)
+
+                return total_price
+
+            elif new_plan == "Standard Plan":
+                total_price = 160_000 - (160_000 * DISCOUNT)
+
+                return total_price
+                
+            elif new_plan == "Premium Plan":
+                total_price = 200_000 - (200_000 * DISCOUNT)
+
+                return total_price
+
+            else:
+                raise Exception("Unknown plan!")
+        else:
+            raise Exception("Referral Code tidak ada!!!")
+        
+# test object
+user_1 = User(username = "Mishbah")
+
+user_1.check_benefit()
+
+print(user_1.upgrade_plan(username = user_1.username,
+                          upgrade_plan = "Premium Plan"))
+        
+        
